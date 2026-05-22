@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF ke Gambar</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script src="../../lib/pdf.min.js"></script>
+    <script src="../../lib/jszip.min.js"></script>
+    
+    <style>
+        /* MEMPERBAIKI MASALAH SCROLL */
+        body { overflow-y: auto !important; height: auto; padding-bottom: 50px; }
+        
+        .upload-area p { margin-top:10px; font-size:0.9em; color:#7f8c8d; }
+
+        /* Pengaturan Ekspor */
+        .setting-group { margin-top: 15px; text-align: left; }
+        .setting-group label { font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 5px; color: #333;}
+        .setting-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background-color: #fff;}
+
+        /* Pengaturan Ekspor Responsive */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Default untuk HP: 1 kolom berbaris ke bawah */
+            gap: 15px;
+        }
+        
+        /* Jika layar lebih lebar dari 500px (Tablet/Laptop), ubah jadi 2 kolom */
+        @media (min-width: 500px) {
+            .settings-grid {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+        /* Area Grid Pratinjau */
+        .image-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;}
+        
+        /* Desain Kartu Gambar yang Baru */
+        .image-card { 
+            position: relative; /* Wajib untuk posisi tombol 'X' */
+            border: 1px solid #e0e0e0; 
+            padding: 10px; 
+            border-radius: 8px; 
+            text-align: center; 
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .image-card img { 
+            max-width: 100%; 
+            height: 120px; /* Tinggi preview tetap */
+            object-fit: contain; 
+            border: 1px solid #ddd; 
+            margin-bottom: 10px;
+            background-color: white;
+        }
+
+        /* Tombol Unduh Individual */
+        .btn-download-img { 
+            background: #27ae60; 
+            color: white; 
+            border: none; 
+            padding: 6px 10px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 0.8em;
+            width: 100%;
+            margin-top: auto; /* Taruh di paling bawah kartu */
+        }
+        .btn-download-img:hover { background: #219653; }
+
+        /* ====== TOMBOL HAPUS ('X') BARU ====== */
+        .remove-btn-corner {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e74c3c;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .remove-btn-corner:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+        /* ------------------------------------ */
+
+        /* CSS untuk Tombol Unduh Konfirmasi yang muncul kemudian */
+        .confirm-area {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 2px dashed #e0e0e0;
+            display: none; /* Sembunyi secara default */
+        }
+    </style>
+</head>
+<body>
+    <div class="module-container" style="max-width: 800px; width: 95%;">
+        <h2>Ekstrak PDF ke Gambar</h2>
+        
+        <div class="upload-area">
+            <input type="file" id="pdf-input" accept="application/pdf">
+            <p style="margin-top:10px; font-size:0.9em; color:#7f8c8d;">Pilih 1 file PDF.</p>
+        </div>
+
+        <div class="settings-grid">
+            <div class="setting-group">
+                <label>Kualitas Gambar (Resolusi):</label>
+                <select id="quality-select">
+                    <option value="1.5">Standar (Web/HP)</option>
+                    <option value="2.5" selected>Tinggi (Teks/Dokumen)</option>
+                    <option value="4.0">Ultra / HD (Sangat Tajam)</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Format Output:</label>
+                <select id="format-select">
+                    <option value="image/png">PNG (Transparan/Terbaik)</option>
+                    <option value="image/jpeg">JPG (Ukuran Lebih Kecil)</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="btn-process-convert" class="action-btn" disabled>1. Ekstrak Halaman PDF</button>
+        <p id="status-message" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+
+        <div class="image-results" id="image-results"></div>
+
+        <div class="confirm-area" id="confirm-area">
+            <button id="btn-download-selected" class="action-btn" style="background-color: #27ae60;">2. Unduh Gambar Terpilih (.zip)</button>
+            <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 10px;">Klik tombol di atas untuk mengunduh semua halaman yang tidak Anda hapus dalam satu file ZIP.</p>
+        </div>
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+:root {
+    --primary: #4A90E2;
+    --primary-dark: #357ABD;
+    --bg-main: #f4f7f6;
+    --bg-sidebar: #ffffff;
+    --text-main: #333333;
+    --text-muted: #7f8c8d;
+    --border-color: #e0e0e0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* Layout Dashboard Utama */
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar Desktop */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* INI KUNCI AGAR BISA DI-SCROLL */
+}
+
+/* Mempercantik bentuk scrollbar agar tidak kaku */
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+.logo-area {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.logo-area p { color: #27ae60; font-size: 0.85em; font-weight: bold; }
+
+/* === GAYA BARU: MENU ACCORDION === */
+.accordion-group {
+    margin-bottom: 10px;
+}
+
+.accordion-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: bold;
+    padding: 10px 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.accordion-toggle:hover { color: var(--primary); }
+
+.arrow {
+    transition: transform 0.3s ease;
+    font-size: 0.9em;
+}
+
+/* Memutar panah saat menu terbuka */
+.accordion-toggle.active .arrow {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    display: none; /* Sembunyikan anak menu secara default */
+    flex-direction: column;
+    padding-left: 10px; /* Geser sedikit ke kanan agar terlihat seperti sub-menu */
+}
+
+.accordion-content.open {
+    display: flex; /* Tampilkan jika punya class 'open' */
+}
+/* === AKHIR GAYA ACCORDION === */
+
+/* (Lanjutkan dengan .menu-btn seperti kode Anda sebelumnya...) */
+
+.menu-btn {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 1em;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.menu-btn:hover:not(.disabled) { background-color: #f0f4f8; }
+
+.menu-btn.active {
+    background-color: #eaf3fc;
+    color: var(--primary);
+    font-weight: bold;
+    border-left: 4px solid var(--primary);
+}
+
+.menu-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Main Content & Iframe */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#app-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: var(--bg-main);
+}
+
+/* ====== KELAS UMUM UNTUK MODUL (view.html) ====== */
+.module-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.module-container h2 { margin-bottom: 20px; text-align: center; }
+
+.upload-area {
+    border: 2px dashed var(--primary);
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #f9fbfd;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.action-btn:disabled { background-color: #a0c4eb; cursor: not-allowed; }
+
+/* =========================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================= */
+
+/* Default: Sembunyikan elemen mobile di Desktop */
+.mobile-header { display: none; }
+.sidebar-overlay { display: none; }
+
+/* Aktifkan saat layar HP (Lebar maksimal 768px) */
+@media (max-width: 768px) {
+    .mobile-header {
+        display: flex;
+        align-items: center;
+        background-color: var(--bg-sidebar);
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        z-index: 1000;
+        position: relative;
+    }
+
+    .mobile-header h2 {
+        margin-left: 15px;
+        font-size: 1.2em;
+        color: var(--primary-dark);
+    }
+
+    #mobile-toggle-btn {
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: var(--text-main);
+    }
+
+    /* Ubah Sidebar menjadi menu geser (Drawer) */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px; 
+        width: 260px;
+        height: 100vh;
+        z-index: 1001; 
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar.open { left: 0; }
+    .logo-area { display: none; }
+
+    /* Overlay Gelap */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .sidebar-overlay.open {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+    }
+
+    .dashboard {
+        height: calc(100vh - 60px);
+    }
+}

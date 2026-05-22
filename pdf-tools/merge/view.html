@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Gabung PDF</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script src="../../lib/pdf-lib.min.js"></script>
+    <script src="../../lib/Sortable.min.js"></script>
+    <script src="../../lib/pdf.min.js"></script> <style>
+        body { overflow-y: auto !important; height: auto; padding-bottom: 50px; }
+        .upload-area p { margin-top:10px; font-size:0.9em; color:#7f8c8d; }
+
+        .setting-group { margin-top: 15px; text-align: left; }
+        .setting-group label { font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 5px; color: #333;}
+        .setting-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background-color: #fff;}
+
+        /* Area Grid */
+        #file-list-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .sortable-item {
+            position: relative;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+        }
+
+        /* Visualisasi Target Biru */
+        .sortable-ghost {
+            opacity: 1 !important;
+            background-color: #eaf3fc !important;
+            border: 2px dashed var(--primary) !important;
+            transform: scale(0.98);
+        }
+        .sortable-ghost > * { visibility: hidden; }
+        .sortable-ghost::after {
+            content: "📍 Geser ke sini";
+            visibility: visible;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .sortable-drag {
+            opacity: 0.9 !important;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+            cursor: grabbing !important;
+            border-color: var(--primary) !important;
+        }
+
+        .sortable-item img {
+            max-width: 100%;
+            height: 120px;
+            object-fit: contain; /* Agar thumbnail dokumen tidak terpotong */
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            pointer-events: none;
+            background-color: #f9f9f9;
+        }
+
+        .sortable-item .file-name {
+            font-size: 0.8em;
+            color: #333;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .sortable-item .file-index {
+            position: absolute;
+            top: -10px; left: -10px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .sortable-item .remove-btn-small {
+            position: absolute;
+            top: 5px; right: 5px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 24px; height: 24px;
+            font-size: 0.9em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .drag-handle {
+            font-size: 1.5em;
+            color: #95a5a6;
+            margin-bottom: 5px;
+            cursor: grab;
+            padding: 5px 20px;
+            touch-action: none;
+        }
+        .drag-handle:active { cursor: grabbing; }
+    </style>
+</head>
+<body>
+    <div class="module-container" style="max-width: 800px; width: 95%;">
+        <h2>Gabungkan Beberapa PDF</h2>
+        
+        <div class="upload-area">
+            <input type="file" id="pdf-input" multiple accept="application/pdf">
+            <p>Pilih beberapa dokumen PDF.<br>Sentuh dan tarik ikon <b>☰</b> untuk mengatur urutan dokumen.</p>
+        </div>
+
+        <div class="setting-group">
+            <label>Format Halaman Output:</label>
+            <select id="page-format-select">
+                <option value="a4_margin">A4 dengan Margin (Standar Dokumen Rapi)</option>
+                <option value="a4_full">Lebar A4 Penuh (Menyesuaikan Tinggi/Tanpa Margin)</option>
+                <option value="original" selected>Resolusi Asli (Mempertahankan Ukuran File Asal)</option>
+            </select>
+        </div>
+
+        <div id="file-list-preview"></div>
+        
+        <button id="btn-process-merge" class="action-btn" disabled>Proses Penggabungan</button>
+        <p id="status-message" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>
