@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resize & Kompres Gambar</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <style>
+        /* Desain Standar Module Anda */
+        body { overflow-y: auto !important; height: auto; padding-bottom: 50px; }
+        .upload-area p { margin-top:10px; font-size:0.9em; color:#7f8c8d; }
+
+        .setting-group { margin-top: 15px; text-align: left; }
+        .setting-group label { font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 5px; color: #333;}
+        .setting-group select, .setting-group input { 
+            width: 100%; 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #ccc; 
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .settings-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 500px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .input-inline { display: flex; gap: 10px; }
+        .input-inline input { flex: 2; }
+        .input-inline select { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="module-container" style="max-width: 800px; width: 95%;">
+        <h2>🖼️ Resize & Kompres Gambar</h2>
+        
+        <div class="upload-area">
+            <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp, image/jpg">
+            <p style="margin-top:10px; font-size:0.9em; color:#7f8c8d;">Pilih 1 file gambar (JPG, PNG, atau WebP).</p>
+        </div>
+
+        <div class="settings-grid">
+            <div class="setting-group">
+                <label>Target Ukuran Maksimal:</label>
+                <div class="input-inline">
+                    <input type="number" id="targetSize" placeholder="Contoh: 500">
+                    <select id="sizeUnit">
+                        <option value="KB">KB</option>
+                        <option value="MB">MB</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Format Output Gambar:</label>
+                <select id="outputFormat">
+                    <option value="image/jpeg">JPG (Terbaik untuk Foto / Ukuran Kecil)</option>
+                    <option value="image/png">PNG (Transparan / Kualitas Asli)</option>
+                    <option value="image/webp">WebP (Ringan untuk Website)</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="processBtn" class="action-btn" style="margin-top: 20px;">Mulai Kompresi</button>
+        <p id="statusMsg" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>
