@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Susun & Hapus Halaman PDF</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <!-- Pustaka Wajib -->
+    <script src="../../lib/pdf.min.js"></script>
+    <script src="../../lib/pdf-lib.min.js"></script>
+    <script src="../../lib/Sortable.min.js"></script> <!-- Untuk fitur Drag & Drop -->
+    
+    <style>
+        body { overflow-y: auto !important; height: auto; padding-bottom: 50px; }
+        .upload-area p { margin-top:10px; font-size:0.9em; color:#7f8c8d; }
+
+        /* Grid untuk Pratinjau Halaman */
+        .page-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 15px; 
+            margin-top: 25px;
+        }
+        
+        /* Desain Kartu Halaman (Menggunakan standar yang sama dengan fitur sebelumnya) */
+        .page-card { 
+            position: relative; 
+            border: 2px solid #e0e0e0; 
+            padding: 10px; 
+            border-radius: 8px; 
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: grab; /* Kursor tangan untuk drag */
+            transition: transform 0.2s;
+        }
+        .page-card:active { cursor: grabbing; transform: scale(1.05); border-color: #007bff; z-index: 10;}
+        
+        .page-card img { 
+            width: 100%; 
+            height: 160px; 
+            object-fit: contain; 
+            border: 1px solid #ddd; 
+            margin-bottom: 10px;
+            background-color: white;
+            pointer-events: none;
+        }
+
+        .page-card .page-label { font-weight: bold; font-size: 0.9em; color: #333; }
+
+        /* Tombol Hapus ('X') di sudut kartu */
+        .remove-btn-corner {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e74c3c;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .remove-btn-corner:hover { background: #c0392b; transform: scale(1.1); }
+
+        .editor-area { display: none; margin-top: 20px; text-align: left; border-top: 2px dashed #ccc; padding-top: 20px;}
+    </style>
+</head>
+<body>
+    <div class="module-container" style="max-width: 900px; width: 95%;">
+        <h2>📑 Edit & Tata Halaman PDF</h2>
+        <p class="subtitle">Hapus halaman yang tidak perlu, atau geser (drag & drop) untuk mengubah urutan.</p>
+        
+        <div class="upload-area">
+            <input type="file" id="pdfInput" accept="application/pdf">
+            <p style="margin-top:10px; font-size:0.9em; color:#7f8c8d;">Pilih 1 file PDF yang ingin diedit.</p>
+        </div>
+
+        <p id="statusMsg" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+
+        <!-- Area Editor yang akan muncul setelah file dipilih -->
+        <div class="editor-area" id="editorArea">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <p style="font-weight: bold; color: #007bff;">✏️ Tahan dan geser gambar untuk menata ulang urutan.</p>
+                <button id="processBtn" class="action-btn" style="width: auto; padding: 10px 20px;">💾 Simpan PDF Baru</button>
+            </div>
+            
+            <div class="page-grid" id="pageGrid"></div>
+        </div>
+
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>

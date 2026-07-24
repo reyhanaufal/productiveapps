@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Print PDF</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script src="../../lib/pdf.min.js"></script>
+    
+    <style>
+        body { overflow-y: auto !important; height: auto; padding-bottom: 50px; }
+        .upload-area p { margin-top:10px; font-size:0.9em; color:#7f8c8d; }
+
+        .settings-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;}
+        @media (min-width: 500px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .setting-group { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;}
+        .setting-group label { font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 8px; color: #333;}
+        .setting-group input[type="number"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        
+        /* Desain Laporan Kasir */
+        .report-card { margin-top: 25px; padding: 20px; background: #fff; border: 2px dashed #007bff; border-radius: 8px; display: none; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        .report-card h3 { margin-top: 0; color: #007bff; text-align: center; margin-bottom: 15px;}
+        .report-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.95em;}
+        .report-total { display: flex; justify-content: space-between; padding: 12px 0; font-size: 1.2em; font-weight: bold; color: #27ae60; margin-top: 10px; border-top: 2px solid #27ae60;}
+        
+        .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 5px;}
+        .checkbox-group input { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="module-container" style="max-width: 800px; width: 95%;">
+        <h2>🖨️ Kalkulator Biaya Print</h2>
+        <p class="subtitle">Deteksi halaman warna & hitam putih secara otomatis.</p>
+        
+        <div class="upload-area">
+            <input type="file" id="pdfInput" accept="application/pdf">
+            <p style="margin-top:10px; font-size:0.9em; color:#7f8c8d;">Pilih 1 file PDF untuk dianalisis.</p>
+        </div>
+
+        <div class="settings-grid">
+            <div class="setting-group">
+                <label>💰 Pengaturan Harga (Rp)</label>
+                <div style="margin-bottom: 10px;">
+                    <small style="color: #666; display: block; margin-bottom: 3px;">Harga per Halaman Hitam Putih:</small>
+                    <input type="number" id="priceBW" placeholder="Contoh: 500" value="500">
+                </div>
+                <div>
+                    <small style="color: #666; display: block; margin-bottom: 3px;">Harga per Halaman Warna:</small>
+                    <input type="number" id="priceColor" placeholder="Contoh: 1000" value="1000">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>📄 Opsi Kertas & Cetak</label>
+                <label class="checkbox-group">
+                    <input type="checkbox" id="duplexCheck">
+                    <span>Cetak Bolak-Balik (Duplex)</span>
+                </label>
+                <small style="color: #7f8c8d; display: block; margin-top: 10px; line-height: 1.4;">
+                    *Jika bolak-balik diaktifkan, kalkulator akan menghitung penghematan jumlah lembar kertas fisik yang dibutuhkan.
+                </small>
+            </div>
+        </div>
+        
+        <button id="processBtn" class="action-btn" style="margin-top: 20px;">Mulai Pindai Dokumen</button>
+        <p id="statusMsg" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+
+        <!-- Area Laporan Akhir -->
+        <div class="report-card" id="reportCard">
+            <h3>📊 Estimasi Laporan Cetak</h3>
+            
+            <div class="report-row">
+                <span>Total Halaman Dokumen:</span>
+                <span id="resTotalPages" style="font-weight: bold;">0</span>
+            </div>
+            <div class="report-row">
+                <span>Total Halaman Hitam Putih:</span>
+                <span id="resBWPages">0</span>
+            </div>
+            <div class="report-row">
+                <span>Total Halaman Berwarna:</span>
+                <span id="resColorPages">0</span>
+            </div>
+            <div class="report-row" style="background: #f1f8ff; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                <span>Lembar Kertas Fisik Dibutuhkan:</span>
+                <span id="resPaperCount" style="font-weight: bold; color: #007bff;">0 Lembar</span>
+            </div>
+            
+            <div class="report-total">
+                <span>Estimasi Total Biaya:</span>
+                <span id="resTotalPrice">Rp 0</span>
+            </div>
+            
+            <small style="display: block; margin-top: 15px; color: #888; font-style: italic;" id="colorPagesList">
+                Halaman warna terdeteksi pada hal: -
+            </small>
+            <!-- Tambahkan baris ini di bawahnya -->
+            <small style="display: block; margin-top: 5px; color: #666; font-style: italic;" id="bwPagesList">
+                Halaman hitam putih terdeteksi pada hal: -
+            </small>
+            
+        </div>
+
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>
