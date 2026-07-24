@@ -1,18 +1,20 @@
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../../lib/pdf.worker.min.js';
 
-let currentFileBuffer = null; 
+// PERBAIKAN: Simpan objek file-nya, BUKAN buffer-nya
+let currentFile = null; 
 
 document.getElementById('pdfInput').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    currentFile = file; // Simpan rujukan file ke variabel global
+    
     const statusMsg = document.getElementById('statusMsg');
     const editorArea = document.getElementById('editorArea');
     const pageGrid = document.getElementById('pageGrid');
     
-    // Failsafe 1: Cek apakah elemen HTML tersedia
     if(!statusMsg || !editorArea || !pageGrid) {
-        alert("Error: Struktur HTML ada yang hilang (ID tidak ditemukan). Pastikan id='editorArea' dan id='pageGrid' ada di index.html.");
+        alert("Error: Struktur HTML ada yang hilang.");
         return;
     }
 
@@ -22,8 +24,9 @@ document.getElementById('pdfInput').addEventListener('change', async (e) => {
     pageGrid.innerHTML = ''; 
 
     try {
-        currentFileBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(currentFileBuffer).promise;
+        // Baca buffer khusus untuk pratinjau pdf.js
+        const previewBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(previewBuffer).promise;
         const totalPages = pdf.numPages;
 
         for (let i = 1; i <= totalPages; i++) {
@@ -55,7 +58,6 @@ document.getElementById('pdfInput').addEventListener('change', async (e) => {
         statusMsg.innerText = "✅ Silakan tahan dan geser (drag) halaman di bawah ini.";
         editorArea.style.display = 'block';
 
-        // Failsafe 2: Cek apakah library Drag & Drop ter-load
         if (typeof Sortable !== 'undefined') {
             new Sortable(pageGrid, {
                 animation: 150,
@@ -63,13 +65,13 @@ document.getElementById('pdfInput').addEventListener('change', async (e) => {
             });
         } else {
             statusMsg.style.color = "orange";
-            statusMsg.innerText = "⚠️ Halaman bisa dihapus, tapi fitur Geser (Drag) mati karena Sortable.js tidak ditemukan.";
+            statusMsg.innerText = "⚠️ Fitur Geser (Drag) mati karena Sortable.js tidak ditemukan.";
         }
 
     } catch (error) {
         console.error(error);
         statusMsg.style.color = "red";
-        statusMsg.innerText = "❌ Gagal memuat PDF. Cek Console (F12) untuk detailnya.";
+        statusMsg.innerText = "❌ Gagal memuat PDF.";
     }
 });
 
@@ -89,7 +91,9 @@ document.getElementById('processBtn').addEventListener('click', async () => {
         const newOrderIndices = Array.from(pageCards).map(card => parseInt(card.dataset.pageIndex));
         const { PDFDocument } = window.PDFLib;
         
-        const originalPdf = await PDFDocument.load(currentFileBuffer);
+        // PERBAIKAN: Baca ulang buffer baru dari file asli khusus untuk pdf-lib
+        const freshBuffer = await currentFile.arrayBuffer();
+        const originalPdf = await PDFDocument.load(freshBuffer);
         const newPdf = await PDFDocument.create();
 
         const copiedPages = await newPdf.copyPages(originalPdf, newOrderIndices);
